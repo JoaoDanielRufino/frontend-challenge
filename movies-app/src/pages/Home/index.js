@@ -8,24 +8,35 @@ import { Container, InputContainer, IllustrationContainer, MovieList } from './s
 import illustration from '../../assets/2.Illustrations/illustration-empty-state.png';
 
 export default function Home() {
+  const [title, setTitle] = useState('');
   const [movies, setMovies] = useState(null);
   const history = useHistory();
+  let myTimeout;
 
-  const handleInputChange = async e => {
-    if(e.target.value === "") {
+  const handleInputChange = async () => {
+    if (title === "") {
       setMovies(null);
       return;
     }
 
-    const response = await api.get(`?apikey=37f7e7fd&s=${e.target.value}`);
+    console.log(title);
+    const response = await api.get(`?apikey=37f7e7fd&s=${title}`);
     const data = response.data;
 
     console.log(data);
 
-    if(data.Response === "False")
+    if (data.Response === "False")
       return;
 
     setMovies(data.Search);
+  }
+
+  const createTimeout = () => { // Adicionando timeout para previnir muitas requisicoes a api
+    myTimeout = setTimeout(handleInputChange, 1000);
+  }
+
+  const deleteTimeout = () => {
+    clearTimeout(myTimeout);
   }
 
   const handleImageClick = movie => {
@@ -36,7 +47,13 @@ export default function Home() {
     <Container>
       <InputContainer>
         <IoIosSearch size={25} />
-        <input placeholder="Search movies..." onChange={e => handleInputChange(e)} />
+        <input
+          value={title}
+          placeholder="Search movies..."
+          onKeyUp={() => createTimeout()}
+          onKeyDown={() => deleteTimeout()}
+          onChange={e => setTitle(e.target.value)}
+        />
       </InputContainer>
 
       {movies === null ?

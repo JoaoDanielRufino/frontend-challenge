@@ -12,7 +12,7 @@ export default createGlobalStyle`
     background: #091014;
   }
 
-  input, button, span {
+  input, button, span, p {
     font-family: sans-serif;
   }
 `;
