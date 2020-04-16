@@ -32,7 +32,7 @@ export default function Home() {
   }
 
   const createTimeout = () => { // Adicionando timeout para previnir muitas requisicoes a api
-    myTimeout = setTimeout(handleInputChange, 1000);
+    myTimeout = setTimeout(handleInputChange, 500);
   }
 
   const deleteTimeout = () => {
