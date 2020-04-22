@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { IoIosSearch } from 'react-icons/io';
 import api from '../../services/api';
 
-import { Container, InputContainer, IllustrationContainer, MovieList } from './styles';
+import EmptyList from '../../components/EmptyList';
+import MovieList from '../../components/MovieList';
 
-import illustration from '../../assets/2.Illustrations/illustration-empty-state.png';
+import { Container, InputContainer } from './styles';
 
 export default function Home() {
   const [title, setTitle] = useState('');
   const [movies, setMovies] = useState(null);
-  const history = useHistory();
   let myTimeout;
 
   const handleInputChange = async () => {
@@ -32,15 +31,11 @@ export default function Home() {
   }
 
   const createTimeout = () => { // Adicionando timeout para previnir muitas requisicoes a api
-    myTimeout = setTimeout(handleInputChange, 500);
+    myTimeout = setTimeout(handleInputChange, 500); // Pode utilizar debounce tbm
   }
 
   const deleteTimeout = () => {
     clearTimeout(myTimeout);
-  }
-
-  const handleImageClick = movie => {
-    history.push(`/movie/${movie.imdbID}`);
   }
 
   return (
@@ -50,30 +45,16 @@ export default function Home() {
         <input
           value={title}
           placeholder="Search movies..."
-          onKeyUp={() => createTimeout()}
-          onKeyDown={() => deleteTimeout()}
+          onKeyUp={createTimeout}
+          onKeyDown={deleteTimeout}
           onChange={e => setTitle(e.target.value)}
         />
       </InputContainer>
 
       {movies === null ?
-        <IllustrationContainer>
-          <img src={illustration} alt="illustration" />
-          <span>Don't know what to search?</span>
-          <span>Here's an offer you can't refuse</span>
-        </IllustrationContainer> :
+        <EmptyList /> :
 
-        <MovieList>
-          {movies.map(movie => (
-            <li key={movie.imdbID} onClick={() => handleImageClick(movie)}>
-              <img className="img" src={movie.Poster} alt="poster" />
-              <div className="info">
-                <p>{movie.Title}</p>
-                <p>{movie.Year}</p>
-              </div>
-            </li>
-          ))}
-        </MovieList>
+        <MovieList movies={movies} />
       }
     </Container>
   );
